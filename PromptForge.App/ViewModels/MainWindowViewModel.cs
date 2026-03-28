@@ -127,6 +127,21 @@ public sealed class MainWindowViewModel : ViewModelBase
     public bool TransparentBackground { get => _transparentBackground; set => SetAndRefresh(ref _transparentBackground, value); }
     public bool UseNegativePrompt { get => _useNegativePrompt; set { if (SetAndRefresh(ref _useNegativePrompt, value)) OnPropertyChanged(nameof(ShowNegativePrompt)); } }
     public bool ShowNegativePrompt => UseNegativePrompt;
+    public string StylizationHelper => GetSliderHelper("Stylization", Stylization);
+    public string RealismHelper => GetSliderHelper("Realism", Realism);
+    public string TextureDepthHelper => GetSliderHelper("TextureDepth", TextureDepth);
+    public string NarrativeDensityHelper => GetSliderHelper("NarrativeDensity", NarrativeDensity);
+    public string SymbolismHelper => GetSliderHelper("Symbolism", Symbolism);
+    public string SurfaceAgeHelper => GetSliderHelper("SurfaceAge", SurfaceAge);
+    public string BackgroundComplexityHelper => GetSliderHelper("BackgroundComplexity", BackgroundComplexity);
+    public string MotionEnergyHelper => GetSliderHelper("MotionEnergy", MotionEnergy);
+    public string AtmosphericDepthHelper => GetSliderHelper("AtmosphericDepth", AtmosphericDepth);
+    public string ChaosHelper => GetSliderHelper("Chaos", Chaos);
+    public string WhimsyHelper => GetSliderHelper("Whimsy", Whimsy);
+    public string TensionHelper => GetSliderHelper("Tension", Tension);
+    public string AweHelper => GetSliderHelper("Awe", Awe);
+    public string SaturationHelper => GetSliderHelper("Saturation", Saturation);
+    public string ContrastHelper => GetSliderHelper("Contrast", Contrast);
     public bool ShowArtistBlendSummary => HasActiveArtist(ArtistInfluencePrimary, InfluenceStrengthPrimary) || HasActiveArtist(ArtistInfluenceSecondary, InfluenceStrengthSecondary);
     public string ArtistBlendSummaryTitle => BuildArtistBlendSummaryTitle();
     public string ArtistBlendSummaryBody => BuildArtistBlendSummaryBody();
@@ -157,6 +172,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         PromptPreview = result.PositivePrompt;
         NegativePromptPreview = result.NegativePrompt;
         RaiseArtistBlendSummaryChanged();
+        RaiseSliderHelperChanged();
     }
 
     private PromptConfiguration CaptureConfiguration() => new()
@@ -292,6 +308,25 @@ public sealed class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(MoodDriver));
     }
 
+    private void RaiseSliderHelperChanged()
+    {
+        OnPropertyChanged(nameof(StylizationHelper));
+        OnPropertyChanged(nameof(RealismHelper));
+        OnPropertyChanged(nameof(TextureDepthHelper));
+        OnPropertyChanged(nameof(NarrativeDensityHelper));
+        OnPropertyChanged(nameof(SymbolismHelper));
+        OnPropertyChanged(nameof(SurfaceAgeHelper));
+        OnPropertyChanged(nameof(BackgroundComplexityHelper));
+        OnPropertyChanged(nameof(MotionEnergyHelper));
+        OnPropertyChanged(nameof(AtmosphericDepthHelper));
+        OnPropertyChanged(nameof(ChaosHelper));
+        OnPropertyChanged(nameof(WhimsyHelper));
+        OnPropertyChanged(nameof(TensionHelper));
+        OnPropertyChanged(nameof(AweHelper));
+        OnPropertyChanged(nameof(SaturationHelper));
+        OnPropertyChanged(nameof(ContrastHelper));
+    }
+
     private string BuildArtistBlendSummaryTitle()
     {
         var primary = CreateArtistState(ArtistInfluencePrimary, InfluenceStrengthPrimary);
@@ -383,6 +418,110 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         var resolved = _artistProfileService.GetProfile(name)?.Name ?? name;
         return new ArtistState(resolved, strength);
+    }
+
+    private string GetSliderHelper(string key, int value)
+    {
+        var artPrefix = ArtStyle switch
+        {
+            "Painterly" => "Painterly: ",
+            "Yarn Relief" => "Textile: ",
+            "Stained Glass" => "Glasswork: ",
+            "Surreal Symbolic" => "Surreal: ",
+            "Concept Art" => "Concept: ",
+            "Cinematic" => "Cinematic: ",
+            _ => string.Empty,
+        };
+
+        var materialPrefix = Material switch
+        {
+            "Yarn" => "Fiber focus. ",
+            "Paint" => "Pigment focus. ",
+            "Glass" => "Glass focus. ",
+            "Ink" => "Ink focus. ",
+            "Stone" => "Stone focus. ",
+            "Metal" => "Metal focus. ",
+            _ => string.Empty,
+        };
+
+        string phrase = key switch
+        {
+            "Stylization" => MapBand(value, "grounded visual treatment", "light stylization", "stylized rendering", "strong stylization", "highly stylized visual language"),
+            "Realism" => MapBand(value, "omit explicit realism", "loosely realistic", "moderately realistic", "high visual realism", "strongly realistic rendering"),
+            "TextureDepth" => MapBand(value, "minimal added texture", "light surface texture", "clear material texture", "rich tactile surface detail", "deeply worked tactile relief"),
+            "NarrativeDensity" => MapBand(value, "simple single-read image", "light narrative layering", "layered storytelling cues", "dense implied story", "world-rich narrative density"),
+            "Symbolism" => MapBand(value, "mostly literal", "subtle symbolic cues", "suggestive symbolic motifs", "pronounced allegory", "mythic symbolic charge"),
+            "SurfaceAge" => MapBand(value, "freshly finished surfaces", "subtle patina", "gentle weathering", "aged surface character", "time-worn patina"),
+            "BackgroundComplexity" => MapBand(value, "minimal background", "restrained background", "supporting environment", "rich environmental detail", "densely layered environment"),
+            "MotionEnergy" => MapBand(value, "still composition", "gentle motion", "active scene energy", "dynamic motion", "high kinetic energy"),
+            "AtmosphericDepth" => MapBand(value, "limited atmospheric depth", "slight recession", "air-filled spatial depth", "luminous depth layering", "deep atmospheric perspective"),
+            "Chaos" => MapBand(value, "controlled composition", "restless tension", "volatile energy", "orchestrated chaos", "high visual instability"),
+            "Whimsy" => MapBand(value, "serious tone", "subtle whimsy", "playful tone", "strong whimsical energy", "bold comedic whimsy"),
+            "Tension" => MapBand(value, "low tension", "light dramatic tension", "noticeable tension", "strong interpersonal tension", "intense dramatic tension"),
+            "Awe" => MapBand(value, "grounded scale", "slight wonder", "atmosphere of wonder", "strong sense of awe", "overwhelming grandeur"),
+            "Saturation" => MapBand(value, "muted saturation", "restrained color", "balanced saturation", "rich color saturation", "vivid color saturation"),
+            "Contrast" => MapBand(value, "low contrast", "gentle contrast", "balanced contrast", "crisp contrast", "striking contrast"),
+            _ => string.Empty,
+        };
+
+        var artistTint = BuildArtistHelperTint(key);
+        return string.IsNullOrWhiteSpace(phrase) ? string.Empty : $"{artPrefix}{materialPrefix}{phrase}{artistTint}".Trim();
+    }
+
+    private string BuildArtistHelperTint(string key)
+    {
+        var area = GetContributionAreaForHelper(key);
+        if (area is null)
+        {
+            return string.Empty;
+        }
+
+        var driver = BuildContributionValue(area.Value);
+        if (string.IsNullOrWhiteSpace(driver) || string.Equals(driver, "No active artist", StringComparison.Ordinal))
+        {
+            return string.Empty;
+        }
+
+        var label = area.Value switch
+        {
+            ContributionArea.Composition => "composition",
+            ContributionArea.Palette => "palette",
+            ContributionArea.Surface => "surface character",
+            ContributionArea.Mood => "mood",
+            _ => "direction",
+        };
+
+        var verb = driver.Contains(" + ", StringComparison.Ordinal) ? "drive" : "drives";
+        return $" Artist tint: {driver} {verb} {label}.";
+    }
+
+    private static ContributionArea? GetContributionAreaForHelper(string key) => key switch
+    {
+        "Stylization" => ContributionArea.Composition,
+        "NarrativeDensity" => ContributionArea.Composition,
+        "BackgroundComplexity" => ContributionArea.Composition,
+        "MotionEnergy" => ContributionArea.Composition,
+        "Chaos" => ContributionArea.Composition,
+        "Realism" => ContributionArea.Surface,
+        "TextureDepth" => ContributionArea.Surface,
+        "SurfaceAge" => ContributionArea.Surface,
+        "Saturation" => ContributionArea.Palette,
+        "Contrast" => ContributionArea.Palette,
+        "Symbolism" => ContributionArea.Mood,
+        "AtmosphericDepth" => ContributionArea.Mood,
+        "Whimsy" => ContributionArea.Mood,
+        "Tension" => ContributionArea.Mood,
+        "Awe" => ContributionArea.Mood,
+        _ => null,
+    };
+
+    private static string MapBand(int value, string low, string lowMid, string mid, string high, string veryHigh)
+    {
+        if (value <= 20) return low;
+        if (value <= 40) return lowMid;
+        if (value <= 60) return mid;
+        if (value <= 80) return high;
+        return veryHigh;
     }
 
     private static bool HasActiveArtist(string? name, int strength) => strength > 20 && !string.IsNullOrWhiteSpace(name) && !string.Equals(name, "None", StringComparison.OrdinalIgnoreCase);
