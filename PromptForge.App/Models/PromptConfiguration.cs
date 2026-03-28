@@ -1,4 +1,4 @@
-﻿namespace PromptForge.App.Models;
+namespace PromptForge.App.Models;
 
 public sealed class PromptConfiguration
 {
@@ -32,7 +32,17 @@ public sealed class PromptConfiguration
     public string AspectRatio { get; set; } = "1:1";
     public bool PrintReady { get; set; }
     public bool TransparentBackground { get; set; }
-    public bool UseNegativePrompt { get; set; }
+    public bool UseNegativePrompt { get; set; } = true;
+    public bool AvoidClutter { get; set; } = true;
+    public bool AvoidMuddyLighting { get; set; } = true;
+    public bool AvoidDistortedAnatomy { get; set; } = true;
+    public bool AvoidExtraLimbs { get; set; } = true;
+    public bool AvoidTextArtifacts { get; set; } = true;
+    public bool AvoidOversaturation { get; set; } = true;
+    public bool AvoidFlatComposition { get; set; } = true;
+    public bool AvoidMessyBackground { get; set; } = true;
+    public bool AvoidWeakMaterialDefinition { get; set; } = true;
+    public bool AvoidBlurryDetail { get; set; } = true;
 
     public PromptConfiguration Clone()
     {
@@ -69,6 +79,16 @@ public sealed class PromptConfiguration
             PrintReady = PrintReady,
             TransparentBackground = TransparentBackground,
             UseNegativePrompt = UseNegativePrompt,
+            AvoidClutter = AvoidClutter,
+            AvoidMuddyLighting = AvoidMuddyLighting,
+            AvoidDistortedAnatomy = AvoidDistortedAnatomy,
+            AvoidExtraLimbs = AvoidExtraLimbs,
+            AvoidTextArtifacts = AvoidTextArtifacts,
+            AvoidOversaturation = AvoidOversaturation,
+            AvoidFlatComposition = AvoidFlatComposition,
+            AvoidMessyBackground = AvoidMessyBackground,
+            AvoidWeakMaterialDefinition = AvoidWeakMaterialDefinition,
+            AvoidBlurryDetail = AvoidBlurryDetail,
         };
     }
 }

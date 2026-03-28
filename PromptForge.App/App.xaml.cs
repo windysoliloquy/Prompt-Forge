@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using PromptForge.App.Services;
 using PromptForge.App.ViewModels;
 
@@ -14,13 +14,17 @@ public partial class App : Application
         var promptBuilder = new PromptBuilderService(artistProfileService);
         var presetStorage = new PresetStorageService();
         var clipboardService = new ClipboardService();
+        var themeService = new ThemeService();
+        themeService.ApplyTheme(themeService.CurrentThemeName);
 
         var mainWindow = new MainWindow
         {
-            DataContext = new MainWindowViewModel(promptBuilder, presetStorage, clipboardService, artistProfileService)
+            DataContext = new MainWindowViewModel(promptBuilder, presetStorage, clipboardService, artistProfileService, themeService)
         };
 
         MainWindow = mainWindow;
         mainWindow.Show();
     }
 }
+
+

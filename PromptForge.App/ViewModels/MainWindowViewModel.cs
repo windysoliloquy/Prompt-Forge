@@ -11,6 +11,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly IPresetStorageService _presetStorageService;
     private readonly IClipboardService _clipboardService;
     private readonly IArtistProfileService _artistProfileService;
+    private readonly IThemeService _themeService;
     private bool _isApplyingConfiguration;
 
     private string _subject = string.Empty;
@@ -43,19 +44,32 @@ public sealed class MainWindowViewModel : ViewModelBase
     private string _aspectRatio = "1:1";
     private bool _printReady;
     private bool _transparentBackground;
-    private bool _useNegativePrompt;
+    private bool _useNegativePrompt = true;
+    private bool _avoidClutter = true;
+    private bool _avoidMuddyLighting = true;
+    private bool _avoidDistortedAnatomy = true;
+    private bool _avoidExtraLimbs = true;
+    private bool _avoidTextArtifacts = true;
+    private bool _avoidOversaturation = true;
+    private bool _avoidFlatComposition = true;
+    private bool _avoidMessyBackground = true;
+    private bool _avoidWeakMaterialDefinition = true;
+    private bool _avoidBlurryDetail = true;
+    private string _selectedThemeName = string.Empty;
     private string _promptPreview = string.Empty;
     private string _negativePromptPreview = string.Empty;
     private string _presetName = string.Empty;
     private string? _selectedPresetName;
     private string _statusMessage = "Ready.";
 
-    public MainWindowViewModel(IPromptBuilderService promptBuilderService, IPresetStorageService presetStorageService, IClipboardService clipboardService, IArtistProfileService artistProfileService)
+    public MainWindowViewModel(IPromptBuilderService promptBuilderService, IPresetStorageService presetStorageService, IClipboardService clipboardService, IArtistProfileService artistProfileService, IThemeService themeService)
     {
         _promptBuilderService = promptBuilderService;
         _presetStorageService = presetStorageService;
         _clipboardService = clipboardService;
         _artistProfileService = artistProfileService;
+        _themeService = themeService;
+        _selectedThemeName = themeService.CurrentThemeName;
 
         Materials = new ObservableCollection<string>(new[] { "None", "Yarn", "Paint", "Glass", "Ink", "Stone", "Metal" });
         ArtStyles = new ObservableCollection<string>(new[] { "None", "Cinematic", "Painterly", "Yarn Relief", "Stained Glass", "Surreal Symbolic", "Concept Art" });
@@ -65,6 +79,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         Lightings = new ObservableCollection<string>(new[] { "Soft daylight", "Golden hour", "Dramatic studio light", "Overcast", "Moonlit", "Volumetric cinematic light" });
         AspectRatios = new ObservableCollection<string>(new[] { "1:1", "4:5", "16:9", "9:16" });
         PresetNames = new ObservableCollection<string>();
+        Themes = new ObservableCollection<string>(themeService.AvailableThemeNames);
 
         CopyPromptCommand = new RelayCommand(CopyPrompt);
         CopyNegativePromptCommand = new RelayCommand(CopyNegativePrompt);
@@ -86,6 +101,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ObservableCollection<string> Lightings { get; }
     public ObservableCollection<string> AspectRatios { get; }
     public ObservableCollection<string> PresetNames { get; }
+    public ObservableCollection<string> Themes { get; }
 
     public RelayCommand CopyPromptCommand { get; }
     public RelayCommand CopyNegativePromptCommand { get; }
@@ -108,10 +124,10 @@ public sealed class MainWindowViewModel : ViewModelBase
     public int Chaos { get => _chaos; set => SetAndRefresh(ref _chaos, value); }
     public string Material { get => _material; set => SetAndRefresh(ref _material, value); }
     public string ArtStyle { get => _artStyle; set => SetAndRefresh(ref _artStyle, value); }
-    public string ArtistInfluencePrimary { get => _artistInfluencePrimary; set => SetAndRefresh(ref _artistInfluencePrimary, value); }
-    public int InfluenceStrengthPrimary { get => _influenceStrengthPrimary; set => SetAndRefresh(ref _influenceStrengthPrimary, value); }
-    public string ArtistInfluenceSecondary { get => _artistInfluenceSecondary; set => SetAndRefresh(ref _artistInfluenceSecondary, value); }
-    public int InfluenceStrengthSecondary { get => _influenceStrengthSecondary; set => SetAndRefresh(ref _influenceStrengthSecondary, value); }
+    public string ArtistInfluencePrimary { get => _artistInfluencePrimary; set => SetArtistAndRefresh(ref _artistInfluencePrimary, value); }
+    public int InfluenceStrengthPrimary { get => _influenceStrengthPrimary; set => SetArtistAndRefresh(ref _influenceStrengthPrimary, value); }
+    public string ArtistInfluenceSecondary { get => _artistInfluenceSecondary; set => SetArtistAndRefresh(ref _artistInfluenceSecondary, value); }
+    public int InfluenceStrengthSecondary { get => _influenceStrengthSecondary; set => SetArtistAndRefresh(ref _influenceStrengthSecondary, value); }
     public string CameraDistance { get => _cameraDistance; set => SetAndRefresh(ref _cameraDistance, value); }
     public string CameraAngle { get => _cameraAngle; set => SetAndRefresh(ref _cameraAngle, value); }
     public int BackgroundComplexity { get => _backgroundComplexity; set => SetAndRefresh(ref _backgroundComplexity, value); }
@@ -126,22 +142,78 @@ public sealed class MainWindowViewModel : ViewModelBase
     public bool PrintReady { get => _printReady; set => SetAndRefresh(ref _printReady, value); }
     public bool TransparentBackground { get => _transparentBackground; set => SetAndRefresh(ref _transparentBackground, value); }
     public bool UseNegativePrompt { get => _useNegativePrompt; set { if (SetAndRefresh(ref _useNegativePrompt, value)) OnPropertyChanged(nameof(ShowNegativePrompt)); } }
+    public bool AvoidClutter { get => _avoidClutter; set => SetAndRefresh(ref _avoidClutter, value); }
+    public bool AvoidMuddyLighting { get => _avoidMuddyLighting; set => SetAndRefresh(ref _avoidMuddyLighting, value); }
+    public bool AvoidDistortedAnatomy { get => _avoidDistortedAnatomy; set => SetAndRefresh(ref _avoidDistortedAnatomy, value); }
+    public bool AvoidExtraLimbs { get => _avoidExtraLimbs; set => SetAndRefresh(ref _avoidExtraLimbs, value); }
+    public bool AvoidTextArtifacts { get => _avoidTextArtifacts; set => SetAndRefresh(ref _avoidTextArtifacts, value); }
+    public bool AvoidOversaturation { get => _avoidOversaturation; set => SetAndRefresh(ref _avoidOversaturation, value); }
+    public bool AvoidFlatComposition { get => _avoidFlatComposition; set => SetAndRefresh(ref _avoidFlatComposition, value); }
+    public bool AvoidMessyBackground { get => _avoidMessyBackground; set => SetAndRefresh(ref _avoidMessyBackground, value); }
+    public bool AvoidWeakMaterialDefinition { get => _avoidWeakMaterialDefinition; set => SetAndRefresh(ref _avoidWeakMaterialDefinition, value); }
+    public bool AvoidBlurryDetail { get => _avoidBlurryDetail; set => SetAndRefresh(ref _avoidBlurryDetail, value); }
+    public string SelectedThemeName
+    {
+        get => _selectedThemeName;
+        set
+        {
+            if (SetProperty(ref _selectedThemeName, value) && !string.IsNullOrWhiteSpace(value))
+            {
+                _themeService.ApplyTheme(value);
+                StatusMessage = $"Skin changed to {value}.";
+            }
+        }
+    }
     public bool ShowNegativePrompt => UseNegativePrompt;
+    public string InfluenceStrengthPrimaryValueText => GetInfluenceBandLabel(InfluenceStrengthPrimary);
+    public string InfluenceStrengthPrimaryGuideText => InfluenceBandGuideText;
+    public string InfluenceStrengthSecondaryValueText => GetInfluenceBandLabel(InfluenceStrengthSecondary);
+    public string InfluenceStrengthSecondaryGuideText => InfluenceBandGuideText;
     public string StylizationHelper => GetSliderHelper("Stylization", Stylization);
+    public string StylizationValueText => GetSliderBandLabel("Stylization", Stylization);
+    public string StylizationGuideText => GetSliderBandGuide("Stylization");
     public string RealismHelper => GetSliderHelper("Realism", Realism);
+    public string RealismValueText => GetSliderBandLabel("Realism", Realism);
+    public string RealismGuideText => GetSliderBandGuide("Realism");
     public string TextureDepthHelper => GetSliderHelper("TextureDepth", TextureDepth);
+    public string TextureDepthValueText => GetSliderBandLabel("TextureDepth", TextureDepth);
+    public string TextureDepthGuideText => GetSliderBandGuide("TextureDepth");
     public string NarrativeDensityHelper => GetSliderHelper("NarrativeDensity", NarrativeDensity);
+    public string NarrativeDensityValueText => GetSliderBandLabel("NarrativeDensity", NarrativeDensity);
+    public string NarrativeDensityGuideText => GetSliderBandGuide("NarrativeDensity");
     public string SymbolismHelper => GetSliderHelper("Symbolism", Symbolism);
+    public string SymbolismValueText => GetSliderBandLabel("Symbolism", Symbolism);
+    public string SymbolismGuideText => GetSliderBandGuide("Symbolism");
     public string SurfaceAgeHelper => GetSliderHelper("SurfaceAge", SurfaceAge);
+    public string SurfaceAgeValueText => GetSliderBandLabel("SurfaceAge", SurfaceAge);
+    public string SurfaceAgeGuideText => GetSliderBandGuide("SurfaceAge");
     public string BackgroundComplexityHelper => GetSliderHelper("BackgroundComplexity", BackgroundComplexity);
+    public string BackgroundComplexityValueText => GetSliderBandLabel("BackgroundComplexity", BackgroundComplexity);
+    public string BackgroundComplexityGuideText => GetSliderBandGuide("BackgroundComplexity");
     public string MotionEnergyHelper => GetSliderHelper("MotionEnergy", MotionEnergy);
+    public string MotionEnergyValueText => GetSliderBandLabel("MotionEnergy", MotionEnergy);
+    public string MotionEnergyGuideText => GetSliderBandGuide("MotionEnergy");
     public string AtmosphericDepthHelper => GetSliderHelper("AtmosphericDepth", AtmosphericDepth);
+    public string AtmosphericDepthValueText => GetSliderBandLabel("AtmosphericDepth", AtmosphericDepth);
+    public string AtmosphericDepthGuideText => GetSliderBandGuide("AtmosphericDepth");
     public string ChaosHelper => GetSliderHelper("Chaos", Chaos);
+    public string ChaosValueText => GetSliderBandLabel("Chaos", Chaos);
+    public string ChaosGuideText => GetSliderBandGuide("Chaos");
     public string WhimsyHelper => GetSliderHelper("Whimsy", Whimsy);
+    public string WhimsyValueText => GetSliderBandLabel("Whimsy", Whimsy);
+    public string WhimsyGuideText => GetSliderBandGuide("Whimsy");
     public string TensionHelper => GetSliderHelper("Tension", Tension);
+    public string TensionValueText => GetSliderBandLabel("Tension", Tension);
+    public string TensionGuideText => GetSliderBandGuide("Tension");
     public string AweHelper => GetSliderHelper("Awe", Awe);
+    public string AweValueText => GetSliderBandLabel("Awe", Awe);
+    public string AweGuideText => GetSliderBandGuide("Awe");
     public string SaturationHelper => GetSliderHelper("Saturation", Saturation);
+    public string SaturationValueText => GetSliderBandLabel("Saturation", Saturation);
+    public string SaturationGuideText => GetSliderBandGuide("Saturation");
     public string ContrastHelper => GetSliderHelper("Contrast", Contrast);
+    public string ContrastValueText => GetSliderBandLabel("Contrast", Contrast);
+    public string ContrastGuideText => GetSliderBandGuide("Contrast");
     public bool ShowArtistBlendSummary => HasActiveArtist(ArtistInfluencePrimary, InfluenceStrengthPrimary) || HasActiveArtist(ArtistInfluenceSecondary, InfluenceStrengthSecondary);
     public string ArtistBlendSummaryTitle => BuildArtistBlendSummaryTitle();
     public string ArtistBlendSummaryBody => BuildArtistBlendSummaryBody();
@@ -160,6 +232,18 @@ public sealed class MainWindowViewModel : ViewModelBase
         var changed = SetProperty(ref field, value);
         if (changed && !_isApplyingConfiguration)
         {
+            RegeneratePrompt();
+        }
+
+        return changed;
+    }
+
+    private bool SetArtistAndRefresh<T>(ref T field, T value)
+    {
+        var changed = SetProperty(ref field, value);
+        if (changed && !_isApplyingConfiguration)
+        {
+            ApplyArtistNegativeConstraintDefaults();
             RegeneratePrompt();
         }
 
@@ -208,6 +292,16 @@ public sealed class MainWindowViewModel : ViewModelBase
         PrintReady = PrintReady,
         TransparentBackground = TransparentBackground,
         UseNegativePrompt = UseNegativePrompt,
+        AvoidClutter = AvoidClutter,
+        AvoidMuddyLighting = AvoidMuddyLighting,
+        AvoidDistortedAnatomy = AvoidDistortedAnatomy,
+        AvoidExtraLimbs = AvoidExtraLimbs,
+        AvoidTextArtifacts = AvoidTextArtifacts,
+        AvoidOversaturation = AvoidOversaturation,
+        AvoidFlatComposition = AvoidFlatComposition,
+        AvoidMessyBackground = AvoidMessyBackground,
+        AvoidWeakMaterialDefinition = AvoidWeakMaterialDefinition,
+        AvoidBlurryDetail = AvoidBlurryDetail,
     };
 
     private void ApplyConfiguration(PromptConfiguration configuration)
@@ -244,6 +338,17 @@ public sealed class MainWindowViewModel : ViewModelBase
         PrintReady = configuration.PrintReady;
         TransparentBackground = configuration.TransparentBackground;
         UseNegativePrompt = configuration.UseNegativePrompt;
+        AvoidClutter = configuration.AvoidClutter;
+        AvoidMuddyLighting = configuration.AvoidMuddyLighting;
+        AvoidDistortedAnatomy = configuration.AvoidDistortedAnatomy;
+        AvoidExtraLimbs = configuration.AvoidExtraLimbs;
+        AvoidTextArtifacts = configuration.AvoidTextArtifacts;
+        AvoidOversaturation = configuration.AvoidOversaturation;
+        AvoidFlatComposition = configuration.AvoidFlatComposition;
+        AvoidMessyBackground = configuration.AvoidMessyBackground;
+        AvoidWeakMaterialDefinition = configuration.AvoidWeakMaterialDefinition;
+        AvoidBlurryDetail = configuration.AvoidBlurryDetail;
+        ApplyArtistNegativeConstraintDefaults();
         _isApplyingConfiguration = false;
         RegeneratePrompt();
     }
@@ -286,6 +391,17 @@ public sealed class MainWindowViewModel : ViewModelBase
             Saturation = 55,
             Contrast = 55,
             AspectRatio = "1:1",
+            UseNegativePrompt = true,
+            AvoidClutter = true,
+            AvoidMuddyLighting = true,
+            AvoidDistortedAnatomy = true,
+            AvoidExtraLimbs = true,
+            AvoidTextArtifacts = true,
+            AvoidOversaturation = true,
+            AvoidFlatComposition = true,
+            AvoidMessyBackground = true,
+            AvoidWeakMaterialDefinition = true,
+            AvoidBlurryDetail = true,
         });
         StatusMessage = "Controls reset to defaults.";
     }
@@ -295,6 +411,34 @@ public sealed class MainWindowViewModel : ViewModelBase
         PresetNames.Clear();
         foreach (var name in _presetStorageService.GetPresetNames()) PresetNames.Add(name);
         SelectedPresetName = selected ?? PresetNames.FirstOrDefault();
+    }
+
+    private void ApplyArtistNegativeConstraintDefaults()
+    {
+        var allowsDistortion = IsAnyArtistActive("Pablo Picasso", "Salvador Dal?", "Salvador Dali", "El Greco", "Amedeo Modigliani", "Francis Bacon", "Egon Schiele");
+        var allowsFlatComposition = IsAnyArtistActive("Pablo Picasso");
+
+        SetProperty(ref _avoidClutter, true, nameof(AvoidClutter));
+        SetProperty(ref _avoidMuddyLighting, true, nameof(AvoidMuddyLighting));
+        SetProperty(ref _avoidDistortedAnatomy, !allowsDistortion, nameof(AvoidDistortedAnatomy));
+        SetProperty(ref _avoidExtraLimbs, true, nameof(AvoidExtraLimbs));
+        SetProperty(ref _avoidTextArtifacts, true, nameof(AvoidTextArtifacts));
+        SetProperty(ref _avoidOversaturation, true, nameof(AvoidOversaturation));
+        SetProperty(ref _avoidFlatComposition, !allowsFlatComposition, nameof(AvoidFlatComposition));
+        SetProperty(ref _avoidMessyBackground, true, nameof(AvoidMessyBackground));
+        SetProperty(ref _avoidWeakMaterialDefinition, true, nameof(AvoidWeakMaterialDefinition));
+        SetProperty(ref _avoidBlurryDetail, true, nameof(AvoidBlurryDetail));
+    }
+
+    private bool IsAnyArtistActive(params string[] artistNames)
+    {
+        return artistNames.Any(IsArtistActive);
+    }
+
+    private bool IsArtistActive(string artistName)
+    {
+        return (InfluenceStrengthPrimary > 20 && string.Equals(ArtistInfluencePrimary, artistName, StringComparison.OrdinalIgnoreCase))
+            || (InfluenceStrengthSecondary > 20 && string.Equals(ArtistInfluenceSecondary, artistName, StringComparison.OrdinalIgnoreCase));
     }
 
     private void RaiseArtistBlendSummaryChanged()
@@ -310,22 +454,77 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     private void RaiseSliderHelperChanged()
     {
+        OnPropertyChanged(nameof(InfluenceStrengthPrimaryValueText));
+        OnPropertyChanged(nameof(InfluenceStrengthPrimaryGuideText));
+        OnPropertyChanged(nameof(InfluenceStrengthSecondaryValueText));
+        OnPropertyChanged(nameof(InfluenceStrengthSecondaryGuideText));
         OnPropertyChanged(nameof(StylizationHelper));
+        OnPropertyChanged(nameof(StylizationValueText));
+        OnPropertyChanged(nameof(StylizationGuideText));
         OnPropertyChanged(nameof(RealismHelper));
+        OnPropertyChanged(nameof(RealismValueText));
+        OnPropertyChanged(nameof(RealismGuideText));
         OnPropertyChanged(nameof(TextureDepthHelper));
+        OnPropertyChanged(nameof(TextureDepthValueText));
+        OnPropertyChanged(nameof(TextureDepthGuideText));
         OnPropertyChanged(nameof(NarrativeDensityHelper));
+        OnPropertyChanged(nameof(NarrativeDensityValueText));
+        OnPropertyChanged(nameof(NarrativeDensityGuideText));
         OnPropertyChanged(nameof(SymbolismHelper));
+        OnPropertyChanged(nameof(SymbolismValueText));
+        OnPropertyChanged(nameof(SymbolismGuideText));
         OnPropertyChanged(nameof(SurfaceAgeHelper));
+        OnPropertyChanged(nameof(SurfaceAgeValueText));
+        OnPropertyChanged(nameof(SurfaceAgeGuideText));
         OnPropertyChanged(nameof(BackgroundComplexityHelper));
+        OnPropertyChanged(nameof(BackgroundComplexityValueText));
+        OnPropertyChanged(nameof(BackgroundComplexityGuideText));
         OnPropertyChanged(nameof(MotionEnergyHelper));
+        OnPropertyChanged(nameof(MotionEnergyValueText));
+        OnPropertyChanged(nameof(MotionEnergyGuideText));
         OnPropertyChanged(nameof(AtmosphericDepthHelper));
+        OnPropertyChanged(nameof(AtmosphericDepthValueText));
+        OnPropertyChanged(nameof(AtmosphericDepthGuideText));
         OnPropertyChanged(nameof(ChaosHelper));
+        OnPropertyChanged(nameof(ChaosValueText));
+        OnPropertyChanged(nameof(ChaosGuideText));
         OnPropertyChanged(nameof(WhimsyHelper));
+        OnPropertyChanged(nameof(WhimsyValueText));
+        OnPropertyChanged(nameof(WhimsyGuideText));
         OnPropertyChanged(nameof(TensionHelper));
+        OnPropertyChanged(nameof(TensionValueText));
+        OnPropertyChanged(nameof(TensionGuideText));
         OnPropertyChanged(nameof(AweHelper));
+        OnPropertyChanged(nameof(AweValueText));
+        OnPropertyChanged(nameof(AweGuideText));
         OnPropertyChanged(nameof(SaturationHelper));
+        OnPropertyChanged(nameof(SaturationValueText));
+        OnPropertyChanged(nameof(SaturationGuideText));
         OnPropertyChanged(nameof(ContrastHelper));
+        OnPropertyChanged(nameof(ContrastValueText));
+        OnPropertyChanged(nameof(ContrastGuideText));
     }
+
+    private const string InfluenceBandGuideText = "Off  |  subtle influence  |  artist-influenced sensibility  |  strongly shaped  |  deeply informed";
+
+    private static readonly Dictionary<string, SliderBandMetadata> SliderBands = new(StringComparer.Ordinal)
+    {
+        ["Stylization"] = new("Grounded", "Light", "Stylized", "Strong", "Maximal"),
+        ["Realism"] = new("Off", "Loose", "Moderate", "High", "Strong"),
+        ["TextureDepth"] = new("Minimal", "Light", "Clear", "Rich", "Deep"),
+        ["NarrativeDensity"] = new("Simple", "Light", "Layered", "Dense", "World-rich"),
+        ["Symbolism"] = new("Literal", "Subtle", "Suggestive", "Allegoric", "Mythic"),
+        ["SurfaceAge"] = new("Fresh", "Soft wear", "Weathered", "Aged", "Time-worn"),
+        ["BackgroundComplexity"] = new("Minimal", "Restrained", "Supporting", "Rich", "Layered"),
+        ["MotionEnergy"] = new("Still", "Gentle", "Active", "Dynamic", "Kinetic"),
+        ["AtmosphericDepth"] = new("Flat", "Light", "Air-filled", "Luminous", "Deep"),
+        ["Chaos"] = new("Controlled", "Restless", "Volatile", "Orchestrated", "Unstable"),
+        ["Whimsy"] = new("Serious", "Subtle", "Playful", "Strong", "Bold"),
+        ["Tension"] = new("Low", "Light", "Noticeable", "Strong", "Intense"),
+        ["Awe"] = new("Grounded", "Slight", "Wonder", "Awe", "Grand"),
+        ["Saturation"] = new("Muted", "Restrained", "Balanced", "Rich", "Vivid"),
+        ["Contrast"] = new("Low", "Gentle", "Balanced", "Crisp", "Striking"),
+    };
 
     private string BuildArtistBlendSummaryTitle()
     {
@@ -515,6 +714,34 @@ public sealed class MainWindowViewModel : ViewModelBase
         _ => null,
     };
 
+    private static string GetInfluenceBandLabel(int value)
+    {
+        if (value <= 20) return "Off";
+        if (value <= 40) return "subtle influence";
+        if (value <= 60) return "artist-influenced sensibility";
+        if (value <= 80) return "strongly shaped";
+        return "deeply informed";
+    }
+
+    private static string GetSliderBandLabel(string key, int value)
+    {
+        return TryGetBandMetadata(key, out var metadata)
+            ? metadata.GetBandLabel(value)
+            : value.ToString();
+    }
+
+    private static string GetSliderBandGuide(string key)
+    {
+        return TryGetBandMetadata(key, out var metadata)
+            ? metadata.GuideText
+            : "0  |  100";
+    }
+
+    private static bool TryGetBandMetadata(string key, out SliderBandMetadata metadata)
+    {
+        return SliderBands.TryGetValue(key, out metadata!);
+    }
+
     private static string MapBand(int value, string low, string lowMid, string mid, string high, string veryHigh)
     {
         if (value <= 20) return low;
@@ -534,5 +761,24 @@ public sealed class MainWindowViewModel : ViewModelBase
         Mood,
     }
 
+    private sealed record SliderBandMetadata(params string[] Labels)
+    {
+        public string GuideText => string.Join("  |  ", Labels);
+
+        public string GetBandLabel(int value)
+        {
+            if (Labels.Length == 0)
+            {
+                return value.ToString();
+            }
+
+            var normalized = Math.Clamp(value, 0, 100);
+            var index = Math.Min(Labels.Length - 1, (int)Math.Floor((normalized / 100d) * Labels.Length));
+            return Labels[index];
+        }
+    }
+
     private sealed record ArtistState(string Name, int Strength);
 }
+
+

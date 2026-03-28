@@ -1,12 +1,13 @@
 <Window x:Class="PromptForge.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:PromptForge.App.Controls"
         Title="Prompt Forge"
         Height="940"
         Width="1480"
         MinHeight="820"
         MinWidth="1320"
-        Background="{StaticResource AppBackgroundBrush}">
+        Background="{DynamicResource AppBackgroundBrush}">
     <Grid Margin="18">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="460" />
@@ -18,33 +19,147 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Margin="18">
                     <TextBlock Text="Prompt Forge" Style="{StaticResource PageTitleTextStyle}" />
-                    <TextBlock Margin="0,6,0,16" Text="A visual prompt synthesizer for structured prompt building." Style="{StaticResource BodyMutedTextStyle}" />
+                    <TextBlock Margin="0,6,0,10"
+                               Text="A visual prompt synthesizer for structured prompt building."
+                               Style="{StaticResource BodyMutedTextStyle}" />
+                    <Border Style="{StaticResource ThemeSelectorBorderStyle}">
+                        <DockPanel LastChildFill="False">
+                            <TextBlock Text="Skin" Style="{StaticResource ThemeSelectorLabelTextStyle}" />
+                            <ComboBox ItemsSource="{Binding Themes}"
+                                      SelectedItem="{Binding SelectedThemeName}"
+                                      Style="{StaticResource ThemeComboBoxStyle}" />
+                        </DockPanel>
+                    </Border>
 
-                    <Border Style="{StaticResource SectionCardStyle}"><StackPanel><TextBlock Text="Subject" Style="{StaticResource SectionTitleTextStyle}" /><TextBlock Text="Subject" Style="{StaticResource FieldLabelTextStyle}" /><TextBox Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AppTextBoxStyle}" /><TextBlock Text="Action" Style="{StaticResource FieldLabelTextStyle}" /><TextBox Text="{Binding Action, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AppTextBoxStyle}" /><TextBlock Text="Relationship / Interaction" Style="{StaticResource FieldLabelTextStyle}" /><TextBox Text="{Binding Relationship, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AppTextBoxStyle}" /></StackPanel></Border>
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Subject" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="Subject" Style="{StaticResource FieldLabelTextStyle}" />
+                            <TextBox Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AppTextBoxStyle}" />
+                            <TextBlock Text="Action" Style="{StaticResource FieldLabelTextStyle}" />
+                            <TextBox Text="{Binding Action, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AppTextBoxStyle}" />
+                            <TextBlock Text="Relationship / Interaction" Style="{StaticResource FieldLabelTextStyle}" />
+                            <TextBox Text="{Binding Relationship, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AppTextBoxStyle}" />
+                        </StackPanel>
+                    </Border>
 
-                    <Border Style="{StaticResource SectionCardStyle}"><StackPanel>
-                        <TextBlock Text="Style" Style="{StaticResource SectionTitleTextStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Stylization" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Stylization}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Stylization}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding StylizationHelper}" Style="{StaticResource SliderHelperTextStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Realism" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Realism}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Realism}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding RealismHelper}" Style="{StaticResource SliderHelperTextStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Texture Depth" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding TextureDepth}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding TextureDepth}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding TextureDepthHelper}" Style="{StaticResource SliderHelperTextStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Narrative Density" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding NarrativeDensity}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding NarrativeDensity}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding NarrativeDensityHelper}" Style="{StaticResource SliderHelperTextStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Symbolism" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Symbolism}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Symbolism}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding SymbolismHelper}" Style="{StaticResource SliderHelperTextStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Surface Age" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding SurfaceAge}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding SurfaceAge}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding SurfaceAgeHelper}" Style="{StaticResource SliderHelperTextStyle}" />
-                        <TextBlock Text="Material" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding Material}" Style="{StaticResource AppComboBoxStyle}" />
-                        <TextBlock Text="Art Style" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding ArtStyles}" SelectedItem="{Binding ArtStyle}" Style="{StaticResource AppComboBoxStyle}" />
-                        <TextBlock Text="Primary Artist Influence" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding ArtistInfluences}" SelectedItem="{Binding ArtistInfluencePrimary}" IsEditable="True" IsTextSearchEnabled="True" Style="{StaticResource AppComboBoxStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Primary Influence Strength" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding InfluenceStrengthPrimary}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding InfluenceStrengthPrimary}" Style="{StaticResource AppSliderStyle}" />
-                        <TextBlock Text="Secondary Artist Influence" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding ArtistInfluences}" SelectedItem="{Binding ArtistInfluenceSecondary}" IsEditable="True" IsTextSearchEnabled="True" Style="{StaticResource AppComboBoxStyle}" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Secondary Influence Strength" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding InfluenceStrengthSecondary}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding InfluenceStrengthSecondary}" Style="{StaticResource AppSliderStyle}" />
-                    </StackPanel></Border>
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Style" Style="{StaticResource SectionTitleTextStyle}" />
+                            <UniformGrid Columns="2" Margin="0,2,0,0">
+                                <controls:SliderFlyout Label="Stylization" Value="{Binding Stylization}" ValueText="{Binding StylizationValueText}" GuideText="{Binding StylizationGuideText}" HelperText="{Binding StylizationHelper}" />
+                                <controls:SliderFlyout Label="Realism" Value="{Binding Realism}" ValueText="{Binding RealismValueText}" GuideText="{Binding RealismGuideText}" HelperText="{Binding RealismHelper}" />
+                                <controls:SliderFlyout Label="Texture Depth" Value="{Binding TextureDepth}" ValueText="{Binding TextureDepthValueText}" GuideText="{Binding TextureDepthGuideText}" HelperText="{Binding TextureDepthHelper}" />
+                                <controls:SliderFlyout Label="Narrative Density" Value="{Binding NarrativeDensity}" ValueText="{Binding NarrativeDensityValueText}" GuideText="{Binding NarrativeDensityGuideText}" HelperText="{Binding NarrativeDensityHelper}" />
+                                <controls:SliderFlyout Label="Symbolism" Value="{Binding Symbolism}" ValueText="{Binding SymbolismValueText}" GuideText="{Binding SymbolismGuideText}" HelperText="{Binding SymbolismHelper}" />
+                                <controls:SliderFlyout Label="Surface Age" Value="{Binding SurfaceAge}" ValueText="{Binding SurfaceAgeValueText}" GuideText="{Binding SurfaceAgeGuideText}" HelperText="{Binding SurfaceAgeHelper}" />
+                            </UniformGrid>
 
-                    <Border Style="{StaticResource SectionCardStyle}"><StackPanel><TextBlock Text="Composition" Style="{StaticResource SectionTitleTextStyle}" /><TextBlock Text="Camera Distance" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding CameraDistances}" SelectedItem="{Binding CameraDistance}" Style="{StaticResource AppComboBoxStyle}" /><TextBlock Text="Camera Angle" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding CameraAngles}" SelectedItem="{Binding CameraAngle}" Style="{StaticResource AppComboBoxStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Background Complexity" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding BackgroundComplexity}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding BackgroundComplexity}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding BackgroundComplexityHelper}" Style="{StaticResource SliderHelperTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Motion Energy" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding MotionEnergy}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding MotionEnergy}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding MotionEnergyHelper}" Style="{StaticResource SliderHelperTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Atmospheric Depth" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding AtmosphericDepth}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding AtmosphericDepth}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding AtmosphericDepthHelper}" Style="{StaticResource SliderHelperTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Chaos" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Chaos}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Chaos}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding ChaosHelper}" Style="{StaticResource SliderHelperTextStyle}" /></StackPanel></Border>
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Material" Style="{StaticResource FieldLabelTextStyle}" />
+                                    <ComboBox ItemsSource="{Binding Materials}" SelectedItem="{Binding Material}" Style="{StaticResource AppComboBoxStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Art Style" Style="{StaticResource FieldLabelTextStyle}" />
+                                    <ComboBox ItemsSource="{Binding ArtStyles}" SelectedItem="{Binding ArtStyle}" Style="{StaticResource AppComboBoxStyle}" />
+                                </StackPanel>
+                            </Grid>
 
-                    <Border Style="{StaticResource SectionCardStyle}"><StackPanel><TextBlock Text="Mood" Style="{StaticResource SectionTitleTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Whimsy" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Whimsy}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Whimsy}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding WhimsyHelper}" Style="{StaticResource SliderHelperTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Tension" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Tension}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Tension}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding TensionHelper}" Style="{StaticResource SliderHelperTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Awe" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Awe}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Awe}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding AweHelper}" Style="{StaticResource SliderHelperTextStyle}" /></StackPanel></Border>
+                            <TextBlock Text="Primary Artist Influence" Style="{StaticResource FieldLabelTextStyle}" />
+                            <ComboBox ItemsSource="{Binding ArtistInfluences}" SelectedItem="{Binding ArtistInfluencePrimary}" IsEditable="True" IsTextSearchEnabled="True" Style="{StaticResource AppComboBoxStyle}" />
+                            <controls:SliderFlyout Label="Primary Strength" Value="{Binding InfluenceStrengthPrimary}" ValueText="{Binding InfluenceStrengthPrimaryValueText}" GuideText="{Binding InfluenceStrengthPrimaryGuideText}" HelperText="Adjusts how strongly the primary artist shapes the prompt." ButtonWidth="404" />
 
-                    <Border Style="{StaticResource SectionCardStyle}"><StackPanel><TextBlock Text="Lighting and Color" Style="{StaticResource SectionTitleTextStyle}" /><TextBlock Text="Lighting" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding Lightings}" SelectedItem="{Binding Lighting}" Style="{StaticResource AppComboBoxStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Saturation" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Saturation}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Saturation}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding SaturationHelper}" Style="{StaticResource SliderHelperTextStyle}" /><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Contrast" Style="{StaticResource FieldLabelTextStyle}" /><TextBlock Grid.Column="1" Text="{Binding Contrast}" Style="{StaticResource ValueTextStyle}" /></Grid><Slider Minimum="0" Maximum="100" Value="{Binding Contrast}" Style="{StaticResource AppSliderStyle}" /><TextBlock Text="{Binding ContrastHelper}" Style="{StaticResource SliderHelperTextStyle}" /></StackPanel></Border>
+                            <TextBlock Text="Secondary Artist Influence" Style="{StaticResource FieldLabelTextStyle}" />
+                            <ComboBox ItemsSource="{Binding ArtistInfluences}" SelectedItem="{Binding ArtistInfluenceSecondary}" IsEditable="True" IsTextSearchEnabled="True" Style="{StaticResource AppComboBoxStyle}" />
+                            <controls:SliderFlyout Label="Secondary Strength" Value="{Binding InfluenceStrengthSecondary}" ValueText="{Binding InfluenceStrengthSecondaryValueText}" GuideText="{Binding InfluenceStrengthSecondaryGuideText}" HelperText="Adjusts how strongly the secondary artist accents the prompt." ButtonWidth="404" />
+                        </StackPanel>
+                    </Border>
 
-                    <Border Style="{StaticResource SectionCardStyle}"><StackPanel><TextBlock Text="Output" Style="{StaticResource SectionTitleTextStyle}" /><TextBlock Text="Aspect Ratio" Style="{StaticResource FieldLabelTextStyle}" /><ComboBox ItemsSource="{Binding AspectRatios}" SelectedItem="{Binding AspectRatio}" Style="{StaticResource AppComboBoxStyle}" /><CheckBox Content="Print-ready" IsChecked="{Binding PrintReady}" Style="{StaticResource AppCheckBoxStyle}" /><CheckBox Content="Transparent background" IsChecked="{Binding TransparentBackground}" Style="{StaticResource AppCheckBoxStyle}" /><CheckBox Content="Use negative prompt" IsChecked="{Binding UseNegativePrompt}" Style="{StaticResource AppCheckBoxStyle}" /></StackPanel></Border>
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Composition" Style="{StaticResource SectionTitleTextStyle}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Camera Distance" Style="{StaticResource FieldLabelTextStyle}" />
+                                    <ComboBox ItemsSource="{Binding CameraDistances}" SelectedItem="{Binding CameraDistance}" Style="{StaticResource AppComboBoxStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Camera Angle" Style="{StaticResource FieldLabelTextStyle}" />
+                                    <ComboBox ItemsSource="{Binding CameraAngles}" SelectedItem="{Binding CameraAngle}" Style="{StaticResource AppComboBoxStyle}" />
+                                </StackPanel>
+                            </Grid>
+                            <UniformGrid Columns="2" Margin="0,4,0,0">
+                                <controls:SliderFlyout Label="Background Complexity" Value="{Binding BackgroundComplexity}" ValueText="{Binding BackgroundComplexityValueText}" GuideText="{Binding BackgroundComplexityGuideText}" HelperText="{Binding BackgroundComplexityHelper}" />
+                                <controls:SliderFlyout Label="Motion Energy" Value="{Binding MotionEnergy}" ValueText="{Binding MotionEnergyValueText}" GuideText="{Binding MotionEnergyGuideText}" HelperText="{Binding MotionEnergyHelper}" />
+                                <controls:SliderFlyout Label="Atmospheric Depth" Value="{Binding AtmosphericDepth}" ValueText="{Binding AtmosphericDepthValueText}" GuideText="{Binding AtmosphericDepthGuideText}" HelperText="{Binding AtmosphericDepthHelper}" />
+                                <controls:SliderFlyout Label="Chaos" Value="{Binding Chaos}" ValueText="{Binding ChaosValueText}" GuideText="{Binding ChaosGuideText}" HelperText="{Binding ChaosHelper}" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Mood" Style="{StaticResource SectionTitleTextStyle}" />
+                            <UniformGrid Columns="2" Margin="0,2,0,0">
+                                <controls:SliderFlyout Label="Whimsy" Value="{Binding Whimsy}" ValueText="{Binding WhimsyValueText}" GuideText="{Binding WhimsyGuideText}" HelperText="{Binding WhimsyHelper}" />
+                                <controls:SliderFlyout Label="Tension" Value="{Binding Tension}" ValueText="{Binding TensionValueText}" GuideText="{Binding TensionGuideText}" HelperText="{Binding TensionHelper}" />
+                                <controls:SliderFlyout Label="Awe" Value="{Binding Awe}" ValueText="{Binding AweValueText}" GuideText="{Binding AweGuideText}" HelperText="{Binding AweHelper}" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Lighting and Color" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="Lighting" Style="{StaticResource FieldLabelTextStyle}" />
+                            <ComboBox ItemsSource="{Binding Lightings}" SelectedItem="{Binding Lighting}" Style="{StaticResource AppComboBoxStyle}" />
+                            <UniformGrid Columns="2" Margin="0,4,0,0">
+                                <controls:SliderFlyout Label="Saturation" Value="{Binding Saturation}" ValueText="{Binding SaturationValueText}" GuideText="{Binding SaturationGuideText}" HelperText="{Binding SaturationHelper}" />
+                                <controls:SliderFlyout Label="Contrast" Value="{Binding Contrast}" ValueText="{Binding ContrastValueText}" GuideText="{Binding ContrastGuideText}" HelperText="{Binding ContrastHelper}" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Output" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="Aspect Ratio" Style="{StaticResource FieldLabelTextStyle}" />
+                            <ComboBox ItemsSource="{Binding AspectRatios}" SelectedItem="{Binding AspectRatio}" Style="{StaticResource AppComboBoxStyle}" />
+                            <CheckBox Content="Print-ready" IsChecked="{Binding PrintReady}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Transparent background" IsChecked="{Binding TransparentBackground}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Include negative prompt" IsChecked="{Binding UseNegativePrompt}" Style="{StaticResource AppCheckBoxStyle}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Negative Constraints" Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="Common exclusions start enabled by default. Certain artists can relax individual constraints automatically when distortion is part of the intended look."
+                                       Style="{StaticResource BodyMutedTextStyle}"
+                                       TextWrapping="Wrap" />
+                            <CheckBox Content="Avoid clutter" IsChecked="{Binding AvoidClutter}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid muddy lighting" IsChecked="{Binding AvoidMuddyLighting}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid distorted anatomy" IsChecked="{Binding AvoidDistortedAnatomy}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid extra limbs / fingers" IsChecked="{Binding AvoidExtraLimbs}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid text or watermark artifacts" IsChecked="{Binding AvoidTextArtifacts}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid oversaturation" IsChecked="{Binding AvoidOversaturation}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid flat composition" IsChecked="{Binding AvoidFlatComposition}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid messy background" IsChecked="{Binding AvoidMessyBackground}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid weak material definition" IsChecked="{Binding AvoidWeakMaterialDefinition}" Style="{StaticResource AppCheckBoxStyle}" />
+                            <CheckBox Content="Avoid blurry detail" IsChecked="{Binding AvoidBlurryDetail}" Style="{StaticResource AppCheckBoxStyle}" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -108,7 +223,7 @@
                     <Border Style="{StaticResource CardBorderStyle}" Padding="22" Margin="0,18,0,0" Visibility="{Binding ShowArtistBlendSummary, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel>
                             <TextBlock Text="Artist Blend Summary" Style="{StaticResource SectionTitleTextStyle}" />
-                            <TextBlock Margin="0,4,0,12" Text="{Binding ArtistBlendSummaryTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Margin="0,4,0,12" Text="{Binding ArtistBlendSummaryTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
                             <TextBlock Text="{Binding ArtistBlendSummaryBody}" TextWrapping="Wrap" Style="{StaticResource BodyMutedTextStyle}" />
                             <UniformGrid Margin="0,14,0,0" Columns="2">
                                 <Border Style="{StaticResource InfoChipBorderStyle}"><StackPanel><TextBlock Text="Composition" Style="{StaticResource ChipLabelTextStyle}" /><TextBlock Text="{Binding CompositionDriver}" Style="{StaticResource ChipValueTextStyle}" TextWrapping="Wrap" /></StackPanel></Border>

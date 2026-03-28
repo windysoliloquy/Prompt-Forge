@@ -5,7 +5,7 @@ namespace PromptForge.App.Services;
 
 public sealed class PromptBuilderService : IPromptBuilderService
 {
-    private const string DefaultNegativePrompt = "blurry, low detail, distorted anatomy, messy composition, poorly defined material texture";
+    private const string DefaultNegativePrompt = "blurry, muddy lighting, distorted anatomy, extra limbs, text artifacts, oversaturated color, flat composition, messy background, poorly defined material texture";
     private readonly IArtistProfileService _artistProfileService;
 
     public PromptBuilderService(IArtistProfileService artistProfileService)
@@ -29,7 +29,7 @@ public sealed class PromptBuilderService : IPromptBuilderService
         return new PromptResult
         {
             PositivePrompt = string.Join(", ", phrases),
-            NegativePrompt = configuration.UseNegativePrompt ? DefaultNegativePrompt : string.Empty,
+            NegativePrompt = configuration.UseNegativePrompt ? BuildNegativePrompt(configuration) : string.Empty,
         };
     }
 
@@ -42,6 +42,90 @@ public sealed class PromptBuilderService : IPromptBuilderService
     }
 
     private static string BuildRelationshipSection(PromptConfiguration configuration) => Clean(configuration.Relationship);
+
+    private static string BuildNegativePrompt(PromptConfiguration configuration)
+    {
+        var phrases = new List<string>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        if (configuration.AvoidBlurryDetail)
+        {
+            AddUnique(phrases, seen, "blurry");
+            AddUnique(phrases, seen, "low detail");
+        }
+
+        if (configuration.AvoidClutter)
+        {
+            AddUnique(phrases, seen, "cluttered composition");
+        }
+
+        if (configuration.AvoidMuddyLighting)
+        {
+            AddUnique(phrases, seen, "muddy lighting");
+        }
+
+        if (configuration.AvoidDistortedAnatomy && !ShouldAllowDistortedAnatomy(configuration))
+        {
+            AddUnique(phrases, seen, "distorted anatomy");
+        }
+
+        if (configuration.AvoidExtraLimbs)
+        {
+            AddUnique(phrases, seen, "extra limbs");
+            AddUnique(phrases, seen, "extra fingers");
+        }
+
+        if (configuration.AvoidTextArtifacts)
+        {
+            AddUnique(phrases, seen, "text artifacts");
+            AddUnique(phrases, seen, "watermark");
+        }
+
+        if (configuration.AvoidOversaturation)
+        {
+            AddUnique(phrases, seen, "oversaturated color");
+        }
+
+        if (configuration.AvoidFlatComposition && !ShouldAllowFlatComposition(configuration))
+        {
+            AddUnique(phrases, seen, "flat composition");
+        }
+
+        if (configuration.AvoidMessyBackground)
+        {
+            AddUnique(phrases, seen, "messy background");
+        }
+
+        if (configuration.AvoidWeakMaterialDefinition)
+        {
+            AddUnique(phrases, seen, "poorly defined material texture");
+        }
+
+        return phrases.Count == 0 ? DefaultNegativePrompt : string.Join(", ", phrases);
+    }
+
+    private static bool ShouldAllowDistortedAnatomy(PromptConfiguration configuration)
+    {
+        return HasAnyActiveArtist(configuration, "Pablo Picasso", "Salvador Dal?", "Salvador Dali", "El Greco", "Amedeo Modigliani", "Francis Bacon", "Egon Schiele");
+    }
+
+    private static bool ShouldAllowFlatComposition(PromptConfiguration configuration)
+    {
+        return HasAnyActiveArtist(configuration, "Pablo Picasso");
+    }
+
+    private static bool HasAnyActiveArtist(PromptConfiguration configuration, params string[] artists)
+    {
+        return artists.Any(artist => HasActiveArtist(configuration.ArtistInfluencePrimary, configuration.InfluenceStrengthPrimary, artist)
+            || HasActiveArtist(configuration.ArtistInfluenceSecondary, configuration.InfluenceStrengthSecondary, artist));
+    }
+
+    private static bool HasActiveArtist(string? name, int strength, string expectedArtist)
+    {
+        return strength > 20
+            && !string.IsNullOrWhiteSpace(name)
+            && string.Equals(name, expectedArtist, StringComparison.OrdinalIgnoreCase);
+    }
 
     private IEnumerable<string> BuildStyleSection(PromptConfiguration configuration)
     {

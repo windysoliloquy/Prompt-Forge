@@ -1161,6 +1161,29 @@
     ]
   },
   {
+    "Name": "Pablo Picasso",
+    "Hallmarks": [
+      "fractured cubist geometry",
+      "bold modernist abstraction",
+      "planar facial and bodily distortion"
+    ],
+    "Composition": [
+      "angular multi-perspective staging",
+      "flattened interlocking spatial planes"
+    ],
+    "Palette": [
+      "ochre, charcoal, muted blue, and sharp black contour accents"
+    ],
+    "Surface": [
+      "cut planes and graphic edge articulation",
+      "dry matte modernist surface tension"
+    ],
+    "Mood": [
+      "restless inventive intensity",
+      "playful formal disruption"
+    ]
+  },
+  {
     "Name": "Paul Cézanne",
     "Hallmarks": [
       "structural brush planes",
@@ -1367,6 +1390,29 @@
     ],
     "Mood": [
       "soulful introspection"
+    ]
+  },
+  {
+    "Name": "Salvador Dal?",
+    "Hallmarks": [
+      "dreamlike surreal transformation",
+      "uncanny symbolic distortion",
+      "precise illusionistic absurdity"
+    ],
+    "Composition": [
+      "theatrical surreal staging",
+      "wide barren spatial recession"
+    ],
+    "Palette": [
+      "sun-bleached ochres, lucid Mediterranean blues, and sharp surreal highlights"
+    ],
+    "Surface": [
+      "hyper-finished illusionistic detail",
+      "polished dreamlike surface clarity"
+    ],
+    "Mood": [
+      "oneiric psychological strangeness",
+      "luxurious uncanny tension"
     ]
   },
   {
