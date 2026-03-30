@@ -5,7 +5,7 @@ namespace PromptForge.App.Services;
 
 public sealed class PromptBuilderService : IPromptBuilderService
 {
-    private const string DefaultNegativePrompt = "blurry, muddy lighting, distorted anatomy, extra limbs, text artifacts, oversaturated color, flat composition, messy background, poorly defined material texture";
+    private const string DefaultNegativePrompt = "no blurry detail, no muddy lighting, no distorted anatomy, no extra limbs, no text artifacts, no oversaturated color, no flat composition, no messy background, no poorly defined material texture";
     private readonly IArtistProfileService _artistProfileService;
 
     public PromptBuilderService(IArtistProfileService artistProfileService)
@@ -123,7 +123,22 @@ public sealed class PromptBuilderService : IPromptBuilderService
             AddUnique(phrases, seen, "poorly defined material texture");
         }
 
-        return phrases.Count == 0 ? DefaultNegativePrompt : string.Join(", ", phrases);
+        return phrases.Count == 0
+            ? DefaultNegativePrompt
+            : string.Join(", ", phrases.Select(FormatNegativePhrase));
+    }
+
+    private static string FormatNegativePhrase(string phrase)
+    {
+        var cleaned = Clean(phrase);
+        if (string.IsNullOrWhiteSpace(cleaned))
+        {
+            return string.Empty;
+        }
+
+        return cleaned.StartsWith("no ", StringComparison.OrdinalIgnoreCase)
+            ? cleaned
+            : $"no {cleaned}";
     }
 
     private static bool ShouldAllowDistortedAnatomy(PromptConfiguration configuration)
