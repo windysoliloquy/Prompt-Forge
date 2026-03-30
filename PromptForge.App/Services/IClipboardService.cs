@@ -2,5 +2,5 @@
 
 public interface IClipboardService
 {
-    void SetText(string text);
+    bool TrySetText(string text);
 }

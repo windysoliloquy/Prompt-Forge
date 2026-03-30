@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -8,10 +8,49 @@
     <LangVersion>12.0</LangVersion>
     <RootNamespace>PromptForge.App</RootNamespace>
     <AssemblyName>PromptForge.App</AssemblyName>
+    <Product>Prompt Forge</Product>
+    <ApplicationIcon>Assets\PromptForge.ico</ApplicationIcon>
+    <PromptForgeDemoMode>true</PromptForgeDemoMode>
+    <DefineConstants Condition="'$(PromptForgeDemoMode)' == 'true'">$(DefineConstants);PROMPTFORGE_DEMO</DefineConstants>
+    <LocalRunOutputDir>$(MSBuildProjectDirectory)\..\AppOutput\PromptForge\</LocalRunOutputDir>
   </PropertyGroup>
+
   <ItemGroup>
-    <Content Include="Data\artist_profiles.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\PromptForge.Core\PromptForge.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\ArtistProfile.cs" />
+    <Compile Remove="Models\PromptConfiguration.cs" />
+    <Compile Remove="Models\PromptResult.cs" />
+    <Compile Remove="Services\ArtistProfileService.cs" />
+    <Compile Remove="Services\IArtistProfileService.cs" />
+    <Compile Remove="Services\IPromptBuilderService.cs" />
+    <Compile Remove="Services\PromptBuilderService.cs" />
+    <Content Remove="Data\artist_profiles.json" />
+  </ItemGroup>
+
+  <Target Name="CopyLocalRunOutput" AfterTargets="Build">
+    <MakeDir Directories="$(LocalRunOutputDir)" />
+    <MakeDir Directories="$(LocalRunOutputDir)Data" />
+
+    <ItemGroup>
+      <LocalRunFiles Include="$(TargetDir)PromptForge.App.exe" />
+      <LocalRunFiles Include="$(TargetDir)PromptForge.App.dll" />
+      <LocalRunFiles Include="$(TargetDir)PromptForge.App.deps.json" />
+      <LocalRunFiles Include="$(TargetDir)PromptForge.App.runtimeconfig.json" />
+      <LocalRunFiles Include="$(TargetDir)PromptForge.App.pdb" Condition="Exists('$(TargetDir)PromptForge.App.pdb')" />
+      <LocalRunData Include="$(TargetDir)Data\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(LocalRunFiles)"
+          DestinationFolder="$(LocalRunOutputDir)"
+          SkipUnchangedFiles="true" />
+
+    <Copy SourceFiles="@(LocalRunData)"
+          DestinationFiles="@(LocalRunData->'$(LocalRunOutputDir)Data\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="'@(LocalRunData)' != ''" />
+  </Target>
 </Project>
+

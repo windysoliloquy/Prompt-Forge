@@ -1,0 +1,93 @@
+<Window x:Class="PromptForge.App.UnlockWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Prompt Forge Version Info"
+        Width="520"
+        SizeToContent="Height"
+        MinHeight="420"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Border Margin="16" Style="{StaticResource CardBorderStyle}" Padding="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <TextBlock x:Name="StatusHeadlineTextBlock" Text="Version: Demo" Style="{StaticResource SectionTitleTextStyle}" />
+                <TextBlock x:Name="StatusBodyTextBlock"
+                           Margin="0,2,0,0"
+                           Text="Demo mode is active."
+                           Style="{StaticResource BodyMutedTextStyle}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Border Grid.Row="2"
+                    Background="{DynamicResource SubtleSurfaceBrush}"
+                    BorderBrush="{DynamicResource SemanticChipBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="14,12">
+                <StackPanel>
+                    <TextBlock Text="Prompt Forge Full" Style="{StaticResource FieldLabelTextStyle}" Margin="0,0,0,4" />
+                    <TextBlock Text="Price: $19.99" Style="{StaticResource BodyMutedTextStyle}" />
+                    <TextBlock Margin="0,10,0,0"
+                               Text="Email to purchase Prompt Forge Full. After payment, you will receive an unlock file."
+                               Style="{StaticResource BodyMutedTextStyle}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Margin="0,10,0,0" Text="Contact: windysoliloquy@gmail.com" Style="{StaticResource BodyMutedTextStyle}" />
+                    <TextBlock Margin="0,10,0,0"
+                               Text="Successful activation preserves your current settings and presets."
+                               Style="{StaticResource BodyMutedTextStyle}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="4"
+                    Background="{DynamicResource SubtleSurfaceBrush}"
+                    BorderBrush="{DynamicResource SemanticChipBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="14,12">
+                <StackPanel>
+                    <TextBlock Text="Offline unlock file requirements" Style="{StaticResource FieldLabelTextStyle}" Margin="0,0,0,4" />
+                    <TextBlock Text="The unlock file is validated locally and then stored in Prompt Forge app data so the original file is no longer required after activation."
+                               Style="{StaticResource BodyMutedTextStyle}"
+                               TextWrapping="Wrap" />
+                    <TextBlock x:Name="LicenseSummaryTextBlock"
+                               Margin="0,10,0,0"
+                               Text="No license imported yet."
+                               Style="{StaticResource BodyMutedTextStyle}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Grid.Row="6"
+                       x:Name="StatusMessageTextBlock"
+                       Text=""
+                       Style="{StaticResource BodyMutedTextStyle}"
+                       TextWrapping="Wrap" />
+
+            <UniformGrid Grid.Row="8" Columns="3">
+                <Button Content="Email to Purchase"
+                        Click="EmailToPurchase_Click"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+                <Button Content="Import Unlock File"
+                        Click="ImportUnlockFile_Click"
+                        Style="{StaticResource EmphasisSecondaryButtonStyle}" />
+                <Button Content="Close"
+                        Click="Close_Click"
+                        Style="{StaticResource TertiaryButtonStyle}" />
+            </UniformGrid>
+        </Grid>
+    </Border>
+</Window>

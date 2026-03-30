@@ -14,12 +14,15 @@ public partial class App : Application
         var promptBuilder = new PromptBuilderService(artistProfileService);
         var presetStorage = new PresetStorageService();
         var clipboardService = new ClipboardService();
+        var licenseService = new LicenseService();
+        var demoModeService = new DemoModeService(licenseService);
+        var licenseDialogService = new LicenseDialogService(licenseService);
         var themeService = new ThemeService();
         themeService.ApplyTheme(themeService.CurrentThemeName);
 
         var mainWindow = new MainWindow
         {
-            DataContext = new MainWindowViewModel(promptBuilder, presetStorage, clipboardService, artistProfileService, themeService)
+            DataContext = new MainWindowViewModel(promptBuilder, presetStorage, clipboardService, demoModeService, licenseService, licenseDialogService, artistProfileService, themeService)
         };
 
         MainWindow = mainWindow;

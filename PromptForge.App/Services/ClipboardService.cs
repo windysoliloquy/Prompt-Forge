@@ -4,8 +4,16 @@ namespace PromptForge.App.Services;
 
 public sealed class ClipboardService : IClipboardService
 {
-    public void SetText(string text)
+    public bool TrySetText(string text)
     {
-        Clipboard.SetText(text ?? string.Empty);
+        try
+        {
+            Clipboard.SetText(text ?? string.Empty);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

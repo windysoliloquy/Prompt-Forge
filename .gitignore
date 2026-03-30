@@ -1,9 +1,11 @@
 # Build output
 bin/
 obj/
+AppOutput/
 
 # Visual Studio
 .vs/
+.dotnet/
 
 # Python cache
 __pycache__/
@@ -16,3 +18,4 @@ cache/
 *.zip
 *.7z
 *.lnk
+artifacts/
